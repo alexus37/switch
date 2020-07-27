@@ -11,7 +11,7 @@ const int switchOnPin = 13;
 #define LED_TYPE    WS2812
 
 #define LED_PIN_MAIN     2
-#define NUM_LEDS_MAIN    20
+#define NUM_LEDS_MAIN    21
 
 
 CRGB leds[NUM_LEDS];
@@ -103,16 +103,6 @@ void setup() {
 }
 
 void loop() {
-
-  // turn on all leds in red
-  for(int i = 0; i < NUM_LEDS; i++) {
-    leds[i] = CRGB::Red;
-    FastLED.show();   
-  }
-
-  
-
-  
   int preButtonOffState = buttonOffState; 
   
   // read the state of the pushbutton value:
@@ -127,6 +117,8 @@ void loop() {
   if (buttonOnState  == HIGH || buttonOffState  == HIGH ) {
     booting = false;
   }
+
+ 
   
 
   if (booting) {
@@ -145,14 +137,28 @@ void loop() {
     // high means no sound
     digitalWrite(soundPin, HIGH);   
   }
-
+  if(buttonOffState == HIGH) {
+      // turn on all leds in red
+    for(int i = 0; i < NUM_LEDS; i++) {
+      leds[i] = CRGB::Red;
+      FastLED.show();   
+    }
+  }
   if(buttonOnState == HIGH) {
+    for(int i = 0; i < NUM_LEDS; i++) {
+      leds[i] = CRGB::Green;
+      FastLED.show();   
+    }
     Serial.println("Sending dmx signal");
-    uint8_t dmxChannel = 5;
-    uint8_t dmxValue = 128;
-    // send dmx signal
-    artnet.setByte(dmxChannel, dmxValue);
-    // send out the Art-Net DMX data
-    artnet.write();
+    uint8_t i;
+    uint8_t j;
+    for (j = 0; j < 255; j++) {
+      for (i = 0; i < 3; i++) {
+        artnet.setByte(i, j);
+      }
+      // send out the Art-Net DMX data
+      artnet.write();
+      delay(100);
+    }
   }
 }
