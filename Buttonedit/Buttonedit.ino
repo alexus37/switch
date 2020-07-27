@@ -150,15 +150,11 @@ void loop() {
       FastLED.show();   
     }
     Serial.println("Sending dmx signal");
-    uint8_t i;
-    uint8_t j;
-    for (j = 0; j < 255; j++) {
-      for (i = 0; i < 3; i++) {
-        artnet.setByte(i, j);
-      }
+    uint8_t i = 0;
+    uint8_t j = 128;
+    artnet.setByte(i, j);
       // send out the Art-Net DMX data
-      artnet.write();
-      delay(100);
-    }
+    artnet.write();
+    delay(100);
   }
 }
